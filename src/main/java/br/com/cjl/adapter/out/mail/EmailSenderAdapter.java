@@ -14,6 +14,6 @@ public class EmailSenderAdapter implements EmailSender {
 
     @Override
     public void sendRecoveryEmail(String token, User user, String url) {
-        mailer.send(Mail.withText(user.getEmail(), "Recuperar Senha", "Acesse para redefinir a senha: "+ url + "/resetpassword?token=" + token));
+        mailer.send(Mail.withText(user.getEmail(), "Recuperar Senha", "Acesse para redefinir a senha: "+ url + "?token=" + token));
     }
 }
