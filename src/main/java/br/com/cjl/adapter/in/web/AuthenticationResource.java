@@ -48,7 +48,7 @@ public class AuthenticationResource {
 
     @PermitAll
     @POST
-    @Path("/passrecover") @Produces(MediaType.APPLICATION_JSON)
+    @Path("/password/recovery") @Produces(MediaType.APPLICATION_JSON)
     public Response passRecover(PassRecoverDTO passRecoverDTO) throws Exception {
         passwordRecoveryUseCase.recover(passRecoverDTO);
         return Response.ok().build();
@@ -64,7 +64,7 @@ public class AuthenticationResource {
 
     @PermitAll
     @GET
-    @Path("/passrecover/email") @Produces(MediaType.APPLICATION_JSON)
+    @Path("/password/recovery/email") @Produces(MediaType.APPLICATION_JSON)
     public Response recoverEmail(SignupDTO signupDTO){
         return Response.ok(identity.getIdentity().getPrincipal().getName()).build();
     }
