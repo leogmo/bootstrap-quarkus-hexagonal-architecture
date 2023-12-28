@@ -5,6 +5,7 @@ import br.com.cjl.application.usecase.account.*;
 import br.com.cjl.infrastructure.security.PBKDF2Encoder;
 import io.quarkus.security.runtime.SecurityIdentityAssociation;
 import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -27,6 +28,9 @@ public class AuthenticationResource {
 
     @Inject
     PasswordRecoveryUseCase passwordRecoveryUseCase;
+
+    @Inject
+    UpdatePasswordUseCase updatePasswordUseCase;
 
     @Inject
     AccountJpaRepositoryAdapter accountJpaRepositoryAdapter;
@@ -64,9 +68,24 @@ public class AuthenticationResource {
 
     @PermitAll
     @GET
-    @Path("/password/recovery/email") @Produces(MediaType.APPLICATION_JSON)
+    @Path("/password/recovery/email")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response recoverEmail(SignupDTO signupDTO){
         return Response.ok(identity.getIdentity().getPrincipal().getName()).build();
     }
 
+    @RolesAllowed({"USER", "ADMIN"})
+    @POST
+    @Path("/password/update")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response passwordUpdate(UpdatePasswordDTO updatePasswordDTO){
+        updatePasswordDTO.setPassword(passwordEncoder.encode(updatePasswordDTO.getPassword()));
+        try {
+            updatePasswordUseCase.update(updatePasswordDTO);
+            return Response.ok().build();
+        } catch (Exception e){
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+
+    }
 }

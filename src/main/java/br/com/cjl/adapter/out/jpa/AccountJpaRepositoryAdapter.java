@@ -36,6 +36,15 @@ public class AccountJpaRepositoryAdapter implements AccountRepository {
         return accountJpaRepository.save(accountJpa).toUser();
     }
 
+    @Override
+    public void save(User user) {
+        AccountJpa account = accountJpaRepository.findById(user.getId()).orElseThrow(
+                () -> new NotFoundException("Não foi possível encontrar o user")
+        );
+        account.setPassword(user.getPassword());
+        accountJpaRepository.save(account);
+    }
+
     private RoleJpa getAdminRole() {
         return roleJpaRepository.findByName(Role.ADMIN.toString()).orElseThrow(
                 () -> new NotFoundException("Não foi possível encontrar a Role")

@@ -8,4 +8,6 @@ import java.util.Optional;
 public interface AccountRepository {
     Optional<User> findByEmail(String username);
     User signup(SignupDTO signupDTO);
+
+    void save(User user);
 }
