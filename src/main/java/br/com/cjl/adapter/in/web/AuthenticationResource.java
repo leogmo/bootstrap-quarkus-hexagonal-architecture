@@ -3,8 +3,10 @@ package br.com.cjl.adapter.in.web;
 import br.com.cjl.adapter.out.jpa.AccountJpaRepositoryAdapter;
 import br.com.cjl.application.usecase.account.*;
 import br.com.cjl.infrastructure.security.PBKDF2Encoder;
+import io.quarkus.security.runtime.SecurityIdentityAssociation;
 import jakarta.annotation.security.PermitAll;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -28,6 +30,9 @@ public class AuthenticationResource {
 
     @Inject
     AccountJpaRepositoryAdapter accountJpaRepositoryAdapter;
+
+    @Inject
+    SecurityIdentityAssociation identity;
 
     @PermitAll
     @POST
@@ -55,6 +60,13 @@ public class AuthenticationResource {
     public Response signup(SignupDTO signupDTO){
         signupDTO.setPassword(passwordEncoder.encode(signupDTO.getPassword()));
         return Response.ok(signupUseCase.signup(signupDTO)).build();
+    }
+
+    @PermitAll
+    @GET
+    @Path("/passrecover/email") @Produces(MediaType.APPLICATION_JSON)
+    public Response recoverEmail(SignupDTO signupDTO){
+        return Response.ok(identity.getIdentity().getPrincipal().getName()).build();
     }
 
 }
